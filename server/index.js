@@ -8,6 +8,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routes/auth.js";
 import { register } from "./controllers/auth.js";
 
 /* configurations*/
@@ -37,6 +38,9 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 // Routes with files
 app.post("/auth/register", upload.single("picture"), register); // here, upload.single("picture") is a middleware that uploades picture into public/assets. register is a controller that adds image in the mongodb database
+
+// routes
+app.use("/auth", authRoutes);
 
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 6001;
