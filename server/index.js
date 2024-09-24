@@ -10,7 +10,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import { register } from "./controllers/auth.js";
-
+import { createPost } from "./controllers/posts.js";
+import userRoutes from "./routes/users.js"
+import postRoutes from "./routes/posts.js"
+import { verifyToken } from "./middleware/auth.js";
+import User from "./models/User.js";
+import Post from "./models/Post.js";
+import { users, posts } from "./data/index.js"
 /* configurations*/
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,10 +44,12 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 // Routes with files
 app.post("/auth/register", upload.single("picture"), register); // here, upload.single("picture") is a middleware that uploades picture into public/assets. register is a controller that adds image in the mongodb database
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 // routes
 app.use("/auth", authRoutes);
-
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 6001;
 // mongoose.connect(process.env.MONGO_URL,{
@@ -56,5 +64,9 @@ const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+
+    //manually injecting information; add data one time
+    // User.insertMany(users);
+    // Post.insertMany(posts);
   })
   .catch((error) => console.log(`${error} did not connect`));
