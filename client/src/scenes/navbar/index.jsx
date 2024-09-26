@@ -56,7 +56,7 @@ const Navbar = () => {
             },
           }}
         >
-          Sociopedia
+          EchoSpace
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
